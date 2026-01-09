@@ -1,209 +1,139 @@
 
 
-Node.js is a JavaScript runtime that allows JavaScript code to run outside the browser. It is mainly used to build fast and scalable server-side applications.
+## 1. Node.js Architecture
+Node.js is a runtime environment that allows JavaScript to run on the server-side. Its architecture is designed to handle asynchronous operations efficiently and consists of several key components:
 
-Key Characteristics
+- **JavaScript Engine (V8):** Executes JavaScript code.
+- **Node.js Core APIs:** Provides modules for file system, HTTP, streams, etc.
+- **libuv:** Handles asynchronous I/O operations.
+- **Event Loop:** Manages execution of asynchronous callbacks.
+- **Thread Pool:** Supports certain blocking operations using threads.
 
-Single-threaded execution model
+Node.js uses a **single-threaded, non-blocking, event-driven** architecture to improve performance and scalability.
 
-Event-driven architecture
+---
 
-Non-blocking I/O operations
+## 2. JavaScript Engine (V8)
+- Developed by **Google**.
+- Compiles JavaScript code to **machine code** for faster execution.
+- Provides **high-performance runtime** for Node.js applications.
+- Executes both synchronous and asynchronous JavaScript code.
 
-Efficient handling of concurrent requests
+---
 
-Main Components
+## 3. Node.js Core APIs
+Node.js provides built-in modules that allow developers to interact with the system:
 
-JavaScript Engine (V8)
+- `fs` → File system operations
+- `http` → HTTP server/client
+- `events` → Event-driven programming
+- `stream` → Streaming data handling
+- `buffer` → Binary data processing
 
-Node.js Core APIs
+**Purpose:** Core APIs simplify development without requiring external libraries.
 
-Native Bindings
+---
 
-Event Loop
+## 4. Native Bindings
+- Native bindings are interfaces that connect Node.js with **C/C++ libraries**.
+- They allow Node.js to access **low-level system resources** efficiently.
+- Examples:
+  - File system operations
+  - Networking operations
 
-libuv
+---
 
-JavaScript Engine (V8)
-What is V8?
+## 5. Event Loop
+- The **Event Loop** is the heart of Node.js asynchronous behavior.
+- It continuously checks the **task queues** and executes pending callbacks.
+- Ensures Node.js can perform **non-blocking I/O** even on a single thread.
 
-V8 is an open-source JavaScript engine developed by Google and written in C++.
+---
 
-Role of V8 in Node.js
+## 6. libuv
 
-Executes JavaScript code
+### What is libuv?
+- A **C library** that provides an **event-driven, cross-platform abstraction layer**.
+- Handles asynchronous I/O operations like file system, network, and timers.
 
-Converts JavaScript into machine code using JIT compilation
+### Why Node.js needs libuv
+- JavaScript alone cannot perform **non-blocking I/O**.
+- libuv enables **asynchronous execution** of heavy tasks.
 
-Manages memory and garbage collection
+### Responsibilities of libuv
+- Handles **asynchronous file system operations**
+- Manages **network operations**
+- Implements **timers**
+- Coordinates the **thread pool**
 
-Note: V8 only executes JavaScript and does not handle I/O operations.
+---
 
-Node.js Core APIs
-Definition
+## 7. Thread Pool
 
-Node.js Core APIs are built-in modules that provide system-level functionality in JavaScript.
+### What is a thread pool?
+- A **pool of worker threads** used to execute multiple tasks concurrently.
+- Prevents the main thread from blocking during heavy operations.
 
-Purpose
+### Why Node.js uses a thread pool
+- Node.js is **single-threaded**.
+- The thread pool handles **blocking operations** efficiently.
 
-Simplify access to system features
+### Operations handled by the thread pool
+- File system operations (read/write)
+- DNS lookups
+- Compression and decompression
+- Crypto operations
 
-Reduce dependency on external libraries
+---
 
-Provide commonly used functionalities
+## 8. Worker Threads
 
-Examples
+### What are worker threads?
+- Worker threads allow Node.js to **run JavaScript in parallel**.
+- Each worker has its **own event loop, memory, and V8 instance**.
 
-fs – File system
+### Why are worker threads needed?
+- To perform **CPU-intensive tasks** without blocking the main event loop.
 
-http – Web servers
+### Difference between thread pool and worker threads
+| Feature               | Thread Pool                      | Worker Threads                   |
+|-----------------------|---------------------------------|---------------------------------|
+| Language              | C/C++ (via libuv)               | JavaScript                      |
+| Purpose               | I/O operations                  | CPU-intensive tasks             |
+| Event Loop            | Shared with main thread         | Separate event loop             |
+| Scalability           | Limited (default 4 threads)     | Can create multiple workers     |
+
+---
+
+## 9. Event Loop Queues
+
+### Macro Task Queue
+- Tasks scheduled for **later execution**.
+- Examples:
+  - `setTimeout()`
+  - `setInterval()`
+  - `setImmediate()`
+  - I/O callbacks
+
+### Micro Task Queue
+- Tasks that run **immediately after the current operation**.
+- Examples:
+  - Promises (`.then()`, `.catch()`)
+  - `process.nextTick()`
+
+### Execution priority
+- **Micro task queue** is executed **before** the macro task queue in each loop iteration.
+- Ensures **promises and critical tasks** run as soon as possible.
+
+---
+
+## Summary
+Node.js achieves **high performance** through:
+
+- V8 engine for fast JS execution
+- Non-blocking, event-driven architecture
+- libuv for asynchronous I/O
+- Thread pool for blocking operations
+- Worker threads for CPU-intensive tasks
+- Event loop with prioritized task queues (macro and micro)
 
-path – File paths
-
-os – System information
-
-timers – Time-based operations
-
-Native Bindings
-What Are Native Bindings?
-
-Native bindings connect JavaScript code with low-level C/C++ implementations.
-
-Why Native Bindings Are Needed
-
-JavaScript cannot directly interact with the OS
-
-Enable access to system-level operations
-
-Convert JavaScript calls into native code execution
-
-Example
-
-fs.readFile() → Native C++ code → libuv
-
-Event Loop
-Definition
-
-The event loop is the mechanism that allows Node.js to execute asynchronous operations without blocking the main thread.
-
-Responsibilities
-
-Monitors callback queues
-
-Executes completed asynchronous tasks
-
-Keeps the application responsive
-
-Implementation
-
-The event loop is implemented using libuv
-
-libuv
-What is libuv?
-
-libuv is a multi-platform C library used by Node.js to manage asynchronous operations.
-
-Why Node.js Needs libuv
-
-Handles low-level asynchronous tasks
-
-Abstracts OS-specific behaviors
-
-Enables cross-platform compatibility
-
-Responsibilities of libuv
-
-Event loop management
-
-Asynchronous file system operations
-
-Network I/O
-
-Timers
-
-Thread pool management
-
-Thread Pool
-What is a Thread Pool?
-
-A thread pool is a group of background threads used to execute blocking or time-consuming tasks.
-
-Why Node.js Uses a Thread Pool
-
-Some operations are blocking in nature
-
-Prevents blocking the main JavaScript thread
-
-Improves performance
-
-Operations Handled by the Thread Pool
-
-File system operations
-
-DNS resolution
-
-Cryptographic functions
-
-Compression tasks
-
-Default Size
-
-4 threads (configurable)
-
-Worker Threads
-What Are Worker Threads?
-
-Worker threads allow JavaScript code to run in parallel using multiple threads.
-
-Why Worker Threads Are Needed
-
-JavaScript in Node.js runs on a single thread
-
-CPU-heavy tasks can block the event loop
-
-Worker threads enable parallel execution
-
-Thread Pool vs Worker Threads
-Thread Pool	Worker Threads
-Managed by libuv	Managed by Node.js
-Runs native C/C++ code	Runs JavaScript code
-Used for I/O tasks	Used for CPU-intensive tasks
-Not directly controlled	Explicitly created by developers
-Event Loop Queues
-Macro Task Queue
-Definition
-
-The macro task queue contains asynchronous tasks that are executed after microtasks.
-
-Examples
-
-setTimeout
-
-setInterval
-
-setImmediate
-
-I/O callbacks
-
-Micro Task Queue
-Definition
-
-The micro task queue contains high-priority tasks that are executed immediately after the current execution.
-
-Examples
-
-Promise.then()
-
-Promise.catch()
-
-queueMicrotask()
-
-Execution Priority Between Queues
-
-Synchronous code
-
-Micro Task Queue
-
-Macro Task Queue
-
-Microtasks always execute before macrotasks.
