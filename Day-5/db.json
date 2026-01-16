@@ -1,0 +1,10 @@
+{
+  "todos": [
+    {
+      "id": 2,
+      "name": "Anita",
+      "course": "Information Technology",
+      "year": 3
+    }
+  ]
+}
