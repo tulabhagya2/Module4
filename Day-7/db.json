@@ -1,0 +1,19 @@
+{
+  "todos": [
+    {
+      "id": 2,
+      "name": "Tulasi",
+      "status": true
+    },
+    {
+      "id": 3,
+      "name": "Tulasi",
+      "status": true
+    },
+    {
+      "id": 4,
+      "name": "Tulasi",
+      "status": false
+    }
+  ]
+}
