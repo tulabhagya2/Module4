@@ -1,0 +1,41 @@
+{
+    "todos":[
+        {
+            "id":1,
+            "name":"Bhagya",
+            "status":true
+        },
+        {
+            "id":2,
+            "name":"Jhansi",
+            "status":false
+        },
+        {
+            "id":3,
+            "name":"Devi",
+            "status":true
+        }
+
+    ],
+ "users":[
+        {
+            "id":1,
+            "name":"Bhagya",
+            "course":"M.P.C",
+            "year":3
+        },
+        {
+            "id":2,
+            "name":"Jhansi",
+            "course":"Bi.P.C",
+            "year":2
+        },
+        {
+            "id":3,
+            "name":"Devi",
+            "course":"B.Z.C",
+            "year":3
+        }
+
+    ]
+}
