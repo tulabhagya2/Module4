@@ -1,0 +1,113 @@
+
+-- Table 1: users
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    name TEXT NOT NULL,
+    email TEXT UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Table 2: orders
+CREATE TABLE orders (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER NOT NULL,
+    amount INTEGER NOT NULL CHECK (amount > 0),
+    status TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    CONSTRAINT fk_user
+        FOREIGN KEY (user_id)
+        REFERENCES users(id)
+        ON DELETE RESTRICT
+);
+
+
+
+
+
+-- Insert 5 users
+INSERT INTO users (name, email) VALUES
+('Amit Kumar', 'amit@gmail.com'),
+('Bhagya Sri', 'bhagya@gmail.com'),
+('Ravi Teja', 'ravi@gmail.com'),
+('Sneha Reddy', 'sneha@gmail.com'),
+('Kiran Rao', 'kiran@gmail.com');
+
+-- Insert 9 orders
+-- One user (Bhagya Sri - id 2) has multiple orders
+INSERT INTO orders (user_id, amount, status) VALUES
+(1, 1200, 'placed'),
+(2, 2500, 'placed'),
+(2, 1800, 'shipped'),
+(2, 3200, 'delivered'),
+(3, 900, 'cancelled'),
+(4, 1500, 'placed'),
+(4, 2200, 'shipped'),
+(5, 3000, 'placed'),
+(5, 1700, 'delivered');
+
+
+
+-- Fetch all users
+SELECT * FROM users;
+
+-- Fetch all orders
+SELECT * FROM orders;
+
+-- Fetch all orders for a specific user (example: user_id = 2)
+SELECT *
+FROM orders
+WHERE user_id = 2;
+
+-- Fetch users who have more than one order
+SELECT u.id, u.name, COUNT(o.id) AS order_count
+FROM users u
+JOIN orders o ON u.id = o.user_id
+GROUP BY u.id, u.name
+HAVING COUNT(o.id) > 1;
+
+-- Fetch total order amount per user
+SELECT u.id, u.name, SUM(o.amount) AS total_amount
+FROM users u
+JOIN orders o ON u.id = o.user_id
+GROUP BY u.id, u.name
+ORDER BY total_amount DESC;
+
+
+
+-- Update email of one user (user_id = 3)
+UPDATE users
+SET email = 'raviteja_new@gmail.com'
+WHERE id = 3;
+
+-- Update status of all orders for a specific user (user_id = 2)
+UPDATE orders
+SET status = 'delivered'
+WHERE user_id = 2;
+
+-- Update order amount for a single order (order_id = 1)
+UPDATE orders
+SET amount = 1400
+WHERE id = 1;
+
+
+
+
+-- Delete one order using order id (order_id = 5)
+DELETE FROM orders
+WHERE id = 5;
+
+-- Delete all orders of a specific user (user_id = 4)
+DELETE FROM orders
+WHERE user_id = 4;
+
+-- Attempt to delete a user who still has orders (user_id = 2)
+-- This will FAIL because of FOREIGN KEY constraint (ON DELETE RESTRICT)
+DELETE FROM users
+WHERE id = 2;
+
+// STEP 6: CONCEPTUAL ANSWER
+Why should orders not be stored inside the users table?
+-- Because one user can have multiple orders (one-to-many relationship).
+-- Storing orders inside the users table would cause data duplication,
+-- violate database normalization rules, and make querying and maintenance difficult.
+-- Using a separate orders table ensures data integrity, scalability, and clarity.
