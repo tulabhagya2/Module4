@@ -100,8 +100,7 @@ WHERE id = 5;
 DELETE FROM orders
 WHERE user_id = 4;
 
--- Attempt to delete a user who still has orders (user_id = 2)
--- This will FAIL because of FOREIGN KEY constraint (ON DELETE RESTRICT)
+
 DELETE FROM users
 WHERE id = 2;
 

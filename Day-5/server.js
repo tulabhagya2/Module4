@@ -1,6 +1,5 @@
 import express from "express";
 import fs from "fs";
-import { json } from "stream/consumers";
 const port=5000;
 
 
@@ -58,29 +57,27 @@ app.put("/update-todo/:id", (req, res) => {
         data: todos[index]
     });
 });
-app.delete("/delete-todo/:id", (req, res) => {
-    let id = Number(req.params.id);
 
-    let rawData = fs.readFileSync("./db.json", "utf-8");
-    let parsedData = JSON.parse(rawData);
 
-    let todos = parsedData.todos;
-
-    let index = todos.findIndex(todo => todo.id === id);
-
-    if (index === -1) {
-        return res.status(404).json({ message: "Todo not found" });
+app.delete("/deleteTodo/:id",(req,res)=>{
+    let id=Number(req.params.id);
+    let rawData=fs.readFileSync("./db.json","utf-8");
+    let parsedData=JSON.parse(rawData);
+    let todos=parsedData.todos;
+    let index=todos.findIndex(todo=>todo.id==id);
+    if(index==-1){
+        res.status(404).json("todos not found");
     }
+    let deleteTodo=todos.splice(index,1);
+    fs.writeFileSync("./db.json",JSON.stringify(parsedData,null,2));
+    fs.json({
+        message:"todo deleted successfully",
+        data:deleteTodo[0]
+    })
 
-    let deletedTodo = todos.splice(index, 1);
 
-    fs.writeFileSync("./db.json", JSON.stringify(parsedData, null, 2));
+})
 
-    res.json({
-        message: "Todo deleted successfully",
-        data: deletedTodo[0]
-    });
-});
 
 
 app.listen(port,()=>{
