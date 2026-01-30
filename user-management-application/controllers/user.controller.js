@@ -6,11 +6,11 @@ const createUser = async (req, res) => {
     const { name, email, password, age, role } = req.body;
 
     // Check duplicate email
-    const { data: existingUser } = await supabase.from("users").select("*").eq("email", email).single();
+    const { data: existingUser } = await supabase.from("usersone").select("*").eq("email", email).single();
     if (existingUser) return res.status(400).json({ status: false, message: "Email already exists" });
 
     // Insert user (password plain text)
-    const { data, error } = await supabase.from("users").insert([
+    const { data, error } = await supabase.from("usersone").insert([
       { name, email, password, age, role }
     ]).select();
 
@@ -26,7 +26,7 @@ const createUser = async (req, res) => {
 // Get All Users
 const getUsers = async (req, res) => {
   try {
-    const { data, error } = await supabase.from("users").select("*");
+    const { data, error } = await supabase.from("usersone").select("*");
     if (error) throw error;
 
     res.status(200).json({ status: true, users: data });
@@ -41,7 +41,7 @@ const getSingleUser = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const { data, error } = await supabase.from("users").select("*").eq("id", userId).single();
+    const { data, error } = await supabase.from("usersone").select("*").eq("id", userId).single();
     if (error || !data) return res.status(404).json({ status: false, message: "User not found" });
 
     res.status(200).json({ status: true, user: data });
@@ -57,7 +57,7 @@ const updateUser = async (req, res) => {
     const { userId } = req.params;
     const updateData = req.body;
 
-    const { data, error } = await supabase.from("users").update(updateData).eq("id", userId).select();
+    const { data, error } = await supabase.from("usersone").update(updateData).eq("id", userId).select();
     if (error || !data.length) return res.status(404).json({ status: false, message: "User not found" });
 
     res.status(200).json({ status: true, message: "User updated", user: data[0] });
@@ -72,7 +72,7 @@ const deleteUser = async (req, res) => {
   try {
     const { userId } = req.params;
 
-    const { data, error } = await supabase.from("users").delete().eq("id", userId).select();
+    const { data, error } = await supabase.from("usersone").delete().eq("id", userId).select();
     if (error || !data.length) return res.status(404).json({ status: false, message: "User not found" });
 
     res.status(200).json({ status: true, message: "User deleted successfully" });
